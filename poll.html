@@ -4,56 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poll Verification</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            border-bottom: 2px solid #0056b3;
+            position: relative;
+        }
+
+        .logout-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 1px 1px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: auto;
+        }
+
+        .logout-button:hover {
+            background-color: #cc0000;
+        }
+
+        main {
+            width: 90%;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.03);
+        }
+
+        .camera-section, .fingerprint-section, .otp-section {
+            display: none;
+        }
+
+        .camera-section video {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .camera-section canvas {
+            display: block;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .otp-section input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: 0.3s;
+        }
+
+        .otp-section input:focus {
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #aaa;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="top-bar">
-            <span class="portal-title">Polling Page</span>
-            <button class="logout-button" onclick="logout()">Logout</button>
-        </div>
+        Polling System
+        <button class="logout-button" onclick="logout()">Logout</button>
     </header>
+    
     <main>
+        <!-- Voter ID Section -->
         <div class="container" id="voter-id-section">
             <h2>Voter Verification</h2>
             <label for="voter-id">Enter Voter ID:</label>
             <input type="text" id="voter-id" maxlength="10" placeholder="Enter 10-character ID">
-            <button onclick="startVerification()">Verify</button>
+            <button onclick="startVerification()">Verify Voter</button>
         </div>
 
-        <div class="camera-section" id="camera-section" style="display:none;">
+        <!-- Camera Verification Section -->
+        <div class="container camera-section" id="camera-section">
             <h2>Face Verification</h2>
-            <video id="camera" autoplay></video>
-            <button onclick="capturePhoto()">Capture Photo</button>
-            <canvas id="photoCanvas" style="display:none;"></canvas>
-            <div>
-                <button onclick="submitPhoto()">Submit</button>
-                <button onclick="retakePhoto()">Retake</button>
-            </div>
+            <video id="videoElement" width="320" height="240" autoplay></video>
+            <canvas id="canvasElement" width="320" height="240"></canvas>
+            <button id="captureBtn">Capture Face</button>
+            <img id="capturedImage" style="display: none; margin-top: 20px; max-width: 100%; border-radius: 10px;">
         </div>
 
-        <div class="fingerprint-section" id="fingerprint-section" style="display:none;">
+        <!-- Fingerprint Verification Section -->
+        <div class="container fingerprint-section" id="fingerprint-section">
             <h2>Fingerprint Verification</h2>
-            <p>Place your finger on the scanner.</p>
+            <p>Please place your finger on the scanner.</p>
             <button onclick="verifyFingerprint()">Verify Fingerprint</button>
         </div>
 
-        <div class="otp-section" id="otp-section" style="display:none; text-align:center;">
-            <h2>Enter OTP</h2>
-            <input type="text" id="otp" maxlength="4" placeholder="Enter 0000">
-            <button onclick="verifyOTP()">Submit</button>
+        <!-- OTP Verification Section -->
+        <div class="container otp-section" id="otp-section">
+            <h2>OTP Verification</h2>
+            <p>We’ve sent an OTP to your registered number/email.</p>
+            <input type="text" id="otp" maxlength="4" placeholder="Enter OTP">
+            <button onclick="verifyOTP()">Submit OTP</button>
         </div>
 
-        <div id="loading-screen" style="display:none; text-align:center; padding:20px;">
+        <!-- Loading Screen -->
+        <div class="container" id="loading-screen" style="display:none;">
             <h2>Verifying, please wait...</h2>
         </div>
 
-        <div id="success-screen" style="display:none; text-align:center; padding:20px;">
-            <h2>Polling successfully completed.</h2>
+        <!-- Success Screen -->
+        <div class="container" id="success-screen" style="display:none;">
+            <h2>Polling Successfully Completed!</h2>
             <p>Proceed to vote...</p>
         </div>
     </main>
-    
+
+    <footer class="footer">
+        <p>&copy; 2025 Polling System. All Rights Reserved.</p>
+    </footer>
+
     <script>
         let videoStream;
 
@@ -69,40 +228,44 @@
         }
 
         function startCamera() {
-            let video = document.getElementById("camera");
+            const videoElement = document.getElementById("videoElement");
+
             navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
+                .then((stream) => {
                     videoStream = stream;
-                    video.srcObject = stream;
+                    videoElement.srcObject = stream;
                 })
-                .catch(error => {
-                    console.error("Error accessing camera:", error);
+                .catch((error) => {
+                    console.log("Error accessing the camera: ", error);
                     alert("Unable to access the camera.");
                 });
         }
 
-        function capturePhoto() {
-            let video = document.getElementById("camera");
-            let canvas = document.getElementById("photoCanvas");
-            let context = canvas.getContext("2d");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            document.getElementById("photoCanvas").style.display = "block";
-        }
+        function captureFace() {
+            const videoElement = document.getElementById("videoElement");
+            const canvasElement = document.getElementById("canvasElement");
+            const capturedImage = document.getElementById("capturedImage");
 
-        function submitPhoto() {
-            document.getElementById("camera-section").style.display = "none";
-            document.getElementById("loading-screen").style.display = "block";
+            const context = canvasElement.getContext("2d");
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+
+            const imageDataUrl = canvasElement.toDataURL("image/png");
+            capturedImage.src = imageDataUrl;
+            capturedImage.style.display = "block"; // Show captured image only once
+
+            stopCamera();
+            document.getElementById("videoElement").style.display = "none";
+            document.getElementById("captureBtn").style.display = "none";
+
             setTimeout(() => {
-                document.getElementById("loading-screen").style.display = "none";
                 document.getElementById("fingerprint-section").style.display = "block";
-                stopCamera();
-            }, 2000);
+            }, 1000);
         }
 
-        function retakePhoto() {
-            document.getElementById("photoCanvas").style.display = "none";
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
         }
 
         function verifyFingerprint() {
@@ -131,12 +294,7 @@
             }
         }
 
-        function stopCamera() {
-            if (videoStream) {
-                let tracks = videoStream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-        }
+        document.getElementById("captureBtn").addEventListener("click", captureFace);
     </script>
 </body>
 </html>

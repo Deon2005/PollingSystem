@@ -4,55 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            transition: 0.3s ease;
+        }
+        input:focus {
+            border-color: #007bff;
+            background-color: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.03);
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="container">
         <h2>Login</h2>
-        <form id="loginForm">
-            <label for="loginId">User ID:</label>
-            <input type="text" id="loginId" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-
-            <button type="submit">Login</button>
-        </form>
-        <p id="error-message" class="error-message"></p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p class="error-message" id="error-message">Invalid username or password</p>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyClnH876hQQcnCqduwf9EhM5UsjDf_LqZ8",
-            authDomain: "pollingsystem-e58b2.firebaseapp.com",
-            projectId: "pollingsystem-e58b2",
-            storageBucket: "pollingsystem-e58b2.firebasestorage.app",
-            messagingSenderId: "1016483141437",
-            appId: "1:1016483141437:web:fe33d546332556671dd754"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+    <script>
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let errorMessage = document.getElementById("error-message");
             
-            const userId = document.getElementById("loginId").value;
-            const password = document.getElementById("password").value;
-
-            // Here, adjust authentication method as needed (this example uses email/password)
-            signInWithEmailAndPassword(auth, userId, password)
-                .then((userCredential) => {
-                    console.log("Login successful!");
-                    window.location.href = "verification.html";
-                })
-                .catch((error) => {
-                    document.getElementById("error-message").textContent = "Login failed: " + error.message;
-                });
-        });
+            if (username === "admin" && password === "admin") {
+                window.location.href = "dashboard.html";
+            } else {
+                errorMessage.style.display = "block";
+            }
+        }
     </script>
 </body>
 </html>
